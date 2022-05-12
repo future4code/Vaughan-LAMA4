@@ -13,6 +13,7 @@ export class UserController {
         try {
 
             const { email, name, password, role } = req.body;
+            
 
             const input: UserInputDTO = {
                 email,
@@ -20,8 +21,9 @@ export class UserController {
                 password,
                 role
             }
-
-            res.status(200).send();
+                
+            const token = await this.userBusiness.createUser(input)
+            res.status(200).send({token});
         } catch (error: any) {
             res.status(400).send({ error: error.message });
         };
