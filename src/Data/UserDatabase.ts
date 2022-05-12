@@ -3,12 +3,12 @@ import { User } from "../Model/User";
 
 export class UserDatabase extends BaseDatabase {
 
-  private static TABLE_NAME = "";
+  private static TABLE_NAME = "LAMA_USERS";
 
   public async createUser(
     id: string,
-    email: string,
     name: string,
+    email: string,
     password: string,
     role: string
   ): Promise<void> {
@@ -27,11 +27,16 @@ export class UserDatabase extends BaseDatabase {
     }
   }
 
-  public async getUserByEmail(email: string): Promise<User> {
+  public async getUserByEmail(email: string): Promise<User | undefined> {
     const result = await BaseDatabase.connection
       .select("*")
       .from(UserDatabase.TABLE_NAME)
       .where({ email });
+
+      if(!result.length){
+        return undefined
+
+      }
 
     return User.toUserModel(result[0]);
   };

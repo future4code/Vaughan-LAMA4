@@ -4,7 +4,7 @@ export class User {
         private name: string,
         private email: string,
         private password: string,
-        private role: UserRole
+        private role: string
     ) {};
 
     getId() {
