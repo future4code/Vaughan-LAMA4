@@ -23,7 +23,7 @@ export class UserController {
             }
                 
             const token = await this.userBusiness.createUser(input)
-            res.status(200).send({token});
+            res.status(201).send({token});
         } catch (error: any) {
             res.status(400).send({ error: error.message });
         };
@@ -40,9 +40,8 @@ export class UserController {
                 password
             };
 
-
-            res.status(200).send();
-
+            const token = await this.userBusiness.login(loginData)
+            res.status(200).send({token});
         } catch (error: any) {
             res.status(400).send({ error: error.message });
         };
