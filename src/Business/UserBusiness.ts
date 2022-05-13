@@ -68,6 +68,7 @@ export class UserBusiness {
             throw new Error("Email inválido !");
         }
 
+        await this.createTable.createTables();
         const registeredemail: User | undefined = await this.userDB.getUserByEmail(email);
 
         if (!registeredemail) {

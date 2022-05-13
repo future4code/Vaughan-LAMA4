@@ -5,6 +5,19 @@ export interface BandInputDTO {
     token: string;
 };
 
+export interface BandDetailsInputDTO {
+    token: string;
+    id?: string,
+    name?: string
+};
+
+export interface BandDetailsOutputDTO {
+    id: string;
+    name: string;
+    genre: string;
+    responsible: string;
+};
+
 export class Band {
     constructor(
         private id: string,

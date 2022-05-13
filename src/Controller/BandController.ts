@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { BaseDatabase } from "../Data/BaseDatabase";
 import { BandBusiness } from "../Business/BandBusiness";
-import { BandInputDTO } from "../Model/Band";
+import { BandDetailsInputDTO, BandDetailsOutputDTO, BandInputDTO } from "../Model/Band";
 
 export class BandController {
 
@@ -26,6 +26,25 @@ export class BandController {
             res.status(400).send(error.message)
         }
 
-    }
+    };
 
-}
+    public async getBandDetails(req: Request, res: Response){
+        try {
+            const id = req.query.id as string | undefined;
+            const name = req.query.name as string | undefined;
+            const token = req.headers.authorization as string;
+
+            const input: BandDetailsInputDTO = {
+                token,
+                id,
+                name
+            };
+
+            const bandDetails: BandDetailsOutputDTO = await this.bandBusiness.bandDetails(input);
+
+            res.status(200).send({bandDetails});
+        } catch (error: any) {
+            res.status(400).send(error.message);
+        };
+    };
+};

@@ -5,7 +5,7 @@ import { HashManager } from "../Services/HashManager";
 import { Authenticator } from "../Services/Authenticator";
 import { TablesCreator } from "../Data/migrations";
 import { BandDatabase } from "../Data/BandDatabase";
-import { Band, BandInputDTO } from "../Model/Band";
+import { Band, BandDetailsInputDTO, BandDetailsOutputDTO, BandInputDTO } from "../Model/Band";
 
 
 export class BandBusiness {
@@ -14,7 +14,8 @@ export class BandBusiness {
         private idGenerator: IdGenerator,
         private authenticator: Authenticator,
         private createTable: TablesCreator,
-        private BandDB: BandDatabase
+        private BandDB: BandDatabase,
+        private UserDB: UserDatabase
     ) { };
 
     public async createBand(band: BandInputDTO) {
@@ -30,8 +31,7 @@ export class BandBusiness {
             throw new Error("Banda já registrada ! ");
         };
 
-        const userInfo = this.authenticator.getTokenData(token)
-        console.log(userInfo)
+        const userInfo = this.authenticator.getTokenData(token);
         if (userInfo.role !== "ADMIN") {
             throw new Error("Somente administradores podem registrar bandas !")
         }
@@ -49,5 +49,44 @@ export class BandBusiness {
             newBand.getGenre(),
             newBand.getResponsible()
         )
-    }
-}
+    };
+
+    public async bandDetails (bandInfo: BandDetailsInputDTO): Promise<BandDetailsOutputDTO> {
+        const { token, id, name } = bandInfo;
+
+        if (!token) {
+            throw new Error ("É necessário estar logado !");
+        };
+        
+        if ( (id && name) || (!id && !name) ) {
+            throw new Error ("Enviar id OU name");
+        };
+
+        const userInfo = this.authenticator.getTokenData(token);
+        
+        const user: User | undefined = await this.UserDB.getUserById(userInfo.id);
+        if (!user) {
+            throw new Error("Usuário não cadastrado !");
+        };
+
+        let band: Band | undefined
+
+        if (id) {
+            band = await this.BandDB.findBandById(id);
+        };
+        if (name) {
+            band = await this.BandDB.findBandByName(name);
+        };
+
+        if (!band) {
+            throw new Error("Esta banda não está cadastrada !")
+        };
+
+        return {
+            id: band.getId(),
+            name: band.getName(),
+            genre: band.getGenre(),
+            responsible: band.getResponsible()
+        };    
+    };
+};

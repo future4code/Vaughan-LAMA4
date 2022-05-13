@@ -35,8 +35,21 @@ export class BandDatabase extends BaseDatabase {
 
         if (!result.length) {
             return undefined
-        }
+        };
 
         return new Band(result[0].id, result[0].name, result[0].genre, result[0].responsible);
-    }
+    };
+
+    public async findBandById(id: string): Promise<Band | undefined> {
+        const result = await BaseDatabase.connection
+            .select("*")
+            .from(BandDatabase.TABLE_NAME)
+            .where({ id });
+
+        if (!result.length) {
+            return undefined
+        };
+
+        return new Band(result[0].id, result[0].name, result[0].genre, result[0].responsible);
+    };
 }
