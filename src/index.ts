@@ -27,13 +27,15 @@ const bandBusiness = new BandBusiness(
     new IdGenerator(),
     new Authenticator(),
     new TablesCreator(),
-    new BandDatabase()
-)
+    new BandDatabase(),
+    new UserDatabase()
+);
 
 const bandController = new BandController(
     bandBusiness
-)
+);
 
 app.post("/signup", (req, res) => userController.signup(req, res));
 app.post("/login", (req, res) => userController.login(req, res));
 app.post("/band", (req, res) => bandController.createBand(req,res));
+app.get("/band", (req, res) => bandController.getBandDetails(req,res));

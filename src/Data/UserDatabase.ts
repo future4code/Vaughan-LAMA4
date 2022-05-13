@@ -41,4 +41,18 @@ export class UserDatabase extends BaseDatabase {
     return User.toUserModel(result[0]);
   };
 
+  public async getUserById(id: string): Promise<User | undefined> {
+    const result = await BaseDatabase.connection
+      .select("*")
+      .from(UserDatabase.TABLE_NAME)
+      .where({ id });
+
+      if(!result.length){
+        return undefined
+
+      }
+
+    return User.toUserModel(result[0]);
+  };
+
 };
