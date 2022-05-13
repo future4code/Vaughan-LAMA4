@@ -57,9 +57,33 @@ export class UserBusiness {
         return token;
     };
 
+    public async login(user: LoginInputDTO) {
+        const {email, password} = user
 
+        if (!email || !password ) {
+            throw new Error("Campos incompletos !");
+        }
 
-    public async getUserByEmail(user: LoginInputDTO) {
+        if (!email.includes("@")) {
+            throw new Error("Email inválido !");
+        }
 
+        const registeredemail: User | undefined = await this.userDB.getUserByEmail(email);
+
+        if (!registeredemail) {
+            throw new Error("Email não registrado ! ");
+        };
+        
+        const isPasswordCorret:boolean = await this.hashManager.compare(password, registeredemail.getPassword())
+        if(!isPasswordCorret){
+            throw new Error("Senha inválida !")
+        }
+        
+        const token: string = this.authenticator.generateToken({
+            id: registeredemail.getId(),
+            role: User.stringToUserRole(registeredemail.getRole())
+         });
+ 
+         return token;
     };
 };
