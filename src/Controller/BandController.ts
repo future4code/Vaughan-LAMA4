@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { BaseDatabase } from "../Data/BaseDatabase";
 import { BandBusiness } from "../Business/BandBusiness";
 import { BandDetailsInputDTO, BandDetailsOutputDTO, BandInputDTO } from "../Model/Band";
 

@@ -1,4 +1,4 @@
-import { UserInputDTO, LoginInputDTO, User } from "../Model/User";
+import { User } from "../Model/User";
 import { UserDatabase } from "../Data/UserDatabase";
 import { IdGenerator } from "../Services/IdGenerator";
 import { HashManager } from "../Services/HashManager";
@@ -20,17 +20,17 @@ export class ShowBusiness {
         private bandDB: BandDatabase,
         private showDB: ShowDatabase,
     ) { };
-    
-    public async bookShow (show: BookShowInputDTO) {
-        const {token, bandId, weekDay, startTime, endTime} = show
 
-        if ( !token || !bandId || !weekDay || !startTime || !endTime ) {
-            throw new Error ("Campos incompletos !");
+    public async bookShow(show: BookShowInputDTO) {
+        const { token, bandId, weekDay, startTime, endTime } = show
+
+        if (!token || !bandId || !weekDay || !startTime || !endTime) {
+            throw new Error("Campos incompletos !");
         };
 
         await this.createTable.createTables();
 
-        const userInfo = this.authenticator.getTokenData(token);     
+        const userInfo = this.authenticator.getTokenData(token);
         const user: User | undefined = await this.userDB.getUserById(userInfo.id);
         if (!user) {
             throw new Error("Usuário não cadastrado !");
@@ -41,25 +41,35 @@ export class ShowBusiness {
 
         const band: Band | undefined = await this.bandDB.findBandById(bandId);
         if (!band) {
-            throw new Error ("Esta banda não está cadastrada !");
+            throw new Error("Esta banda não está cadastrada !");
         };
 
         Show.stringToWeekDay(weekDay);
 
-        if (! Number.isInteger(startTime) || ! Number.isInteger(endTime)) {
-            throw new Error ("Horário(s) inválido(s) !");
+        if (!Number.isInteger(startTime) || !Number.isInteger(endTime)) {
+            throw new Error("Horário(s) inválido(s) !");
         };
 
-        if ( !(startTime >= 8 && startTime <= 22 && endTime >= 9 && endTime <= 23) ) {
-            throw new Error ("Horário(s) inválido(s) !");
+        if (!(startTime >= 8 && startTime <= 22 && endTime >= 9 && endTime <= 23)) {
+            throw new Error("Horário(s) inválido(s) !");
         };
 
         for (let i = startTime; i < endTime; i++) {
-            const hasShowScheduled: boolean = await this.showDB.searchShowsByTime(weekDay, i, endTime -1);
+            const hasShowScheduled: boolean = await this.showDB.searchShowsByTime(weekDay, i, endTime - 1);
             if (hasShowScheduled) {
-                throw new Error ("Conflito entre shows já marcados");
+                throw new Error("Conflito entre shows já marcados");
             };
         };
 
+        const id = this.idGenerator.generateId();
+        const newShow = new Show(id, bandId, weekDay, startTime, endTime);
+
+        await this.showDB.createShow(
+            newShow.getId(),
+            newShow.getWeekDay(),
+            newShow.getStartTime(),
+            newShow.getEndTime(),
+            newShow.getBandId()
+        );
     };
 };

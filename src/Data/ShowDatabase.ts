@@ -1,5 +1,4 @@
 import { BaseDatabase } from "./BaseDatabase";
-import { User } from "../Model/User";
 
 export class ShowDatabase extends BaseDatabase {
 

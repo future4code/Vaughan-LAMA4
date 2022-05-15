@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { UserInputDTO, LoginInputDTO} from "../Model/User";
 import { BaseDatabase } from "../Data/BaseDatabase";
-import { UserBusiness } from "../Business/UserBusiness";
 import { ShowBusiness } from "../Business/ShowBusiness";
 import { BookShowInputDTO } from "../Model/Show";
 
