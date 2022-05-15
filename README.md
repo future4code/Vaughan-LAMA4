@@ -1,8 +1,12 @@
 # <h1 align="center" id="top" border="none">🎶 Labenu Music Awards - LAMA4 🎶</h1>
 
 <div align="center">
-<a href="#sobre">Sobre</a> | <a href="#tecnologias">Tecnologias</a> | <a href="#funciona">O que foi feito</a> | <a href="#nao-funciona">Backlog</a> | <a href="#devs">Desenvolvedores</a>
+<a href="#link">API</a> | <a href="#sobre">Sobre</a> | <a href="#tecnologias">Tecnologias</a> | <a href="#funciona">O que foi feito</a> | <a href="#nao-funciona">Backlog</a> | <a href="#devs">Desenvolvedores</a>
 </div>
+
+## <h2 id="link">🔗 API <h2>
+
+https://documenter.getpostman.com/view/17587459/UyxjFm6p
 
 ## <h2 id="sobre">📓 Sobre<h2>
 
