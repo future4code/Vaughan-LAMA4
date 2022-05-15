@@ -4,10 +4,10 @@ import { IdGenerator } from "../Services/IdGenerator";
 import { HashManager } from "../Services/HashManager";
 import { Authenticator } from "../Services/Authenticator";
 import { TablesCreator } from "../Data/migrations";
-import { BookShowInputDTO, Show } from "../Model/Show";
+import { BookShowInputDTO, Show, ShowsByDayInputDTO, ShowsByDayOutputDTO } from "../Model/Show";
 import { BandDatabase } from "../Data/BandDatabase";
 import { Band } from "../Model/Band";
-import { ShowDatabase } from "../Data/ShowDataBase";
+import { ShowDatabase } from "../Data/ShowDatabase";
 
 export class ShowBusiness {
 
@@ -71,5 +71,27 @@ export class ShowBusiness {
             newShow.getEndTime(),
             newShow.getBandId()
         );
+    };
+
+    public async getShowsByDay (input: ShowsByDayInputDTO) {
+        const { weekDay, token } = input;
+
+        if (!token || !weekDay) {
+            throw new Error("Campos incompletos !");
+        };
+
+        await this.createTable.createTables();
+
+        const userInfo = this.authenticator.getTokenData(token);
+        const user: User | undefined = await this.userDB.getUserById(userInfo.id);
+        if (!user) {
+            throw new Error("Usuário não cadastrado !");
+        };
+
+        Show.stringToWeekDay(weekDay);
+
+        const showsList: ShowsByDayOutputDTO[] = await this.showDB.getShowsByDay(weekDay);
+
+        return showsList;
     };
 };

@@ -1,3 +1,5 @@
+import { ShowsByDayOutputDTO } from "../Model/Show";
+import { BandDatabase } from "./BandDatabase";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class ShowDatabase extends BaseDatabase {
@@ -42,6 +44,27 @@ export class ShowDatabase extends BaseDatabase {
             };
 
             return true;
+        } catch (error: any) {
+            throw new Error(error.sqlMessage || error.message);
+        };
+    };
+
+    public async getShowsByDay(
+        week_day: string
+    ): Promise<ShowsByDayOutputDTO[]> {
+        try {
+            const result = await BaseDatabase.connection(ShowDatabase.TABLE_NAME)
+                .select("name", "music_genre as genre")
+                .where({ week_day })
+                .orderBy("start_time", "asc")
+                .innerJoin(
+                    "LAMA_BANDS",
+                    `${ShowDatabase.TABLE_NAME}.band_id`,
+                    "=",
+                    "LAMA_BANDS.id"
+                );
+
+            return result;
         } catch (error: any) {
             throw new Error(error.sqlMessage || error.message);
         };
