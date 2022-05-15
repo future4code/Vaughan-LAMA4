@@ -6,18 +6,15 @@ export interface BookShowInputDTO {
     endTime: number;
 };
 
-// export interface BandDetailsInputDTO {
-//     token: string;
-//     id?: string,
-//     name?: string
-// };
+export interface ShowsByDayInputDTO {
+    weekDay: string,
+    token: string
+};
 
-// export interface BandDetailsOutputDTO {
-//     id: string;
-//     name: string;
-//     genre: string;
-//     responsible: string;
-// };
+export interface ShowsByDayOutputDTO {
+    name: string,
+    genre: string
+};
 
 export class Show {
     constructor(
