@@ -1,15 +1,15 @@
 import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../Model/User";
 
-export class UserDatabase extends BaseDatabase {
+export class ShowDatabase extends BaseDatabase {
 
     private static TABLE_NAME = "LAMA_SHOWS";
 
     public async createShow(
         id: string,
         week_day: string,
-        start_time: string,
-        end_time: string,
+        start_time: number,
+        end_time: number,
         band_id: string,
     ): Promise<void> {
         try {
@@ -21,7 +21,28 @@ export class UserDatabase extends BaseDatabase {
                     end_time,
                     band_id
                 })
-                .into(UserDatabase.TABLE_NAME);
+                .into(ShowDatabase.TABLE_NAME);
+        } catch (error: any) {
+            throw new Error(error.sqlMessage || error.message);
+        };
+    };
+
+    public async searchShowsByTime(
+        week_day: string,
+        start_time: number,
+        end_time: number,
+    ): Promise<boolean> {
+        try {
+            const result = await BaseDatabase.connection(ShowDatabase.TABLE_NAME)
+                .select("*")
+                .where({ week_day })
+                .havingBetween("start_time", [start_time, end_time]);
+
+            if (!result.length) {
+                return false
+            };
+
+            return true;
         } catch (error: any) {
             throw new Error(error.sqlMessage || error.message);
         };

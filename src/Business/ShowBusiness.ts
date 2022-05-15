@@ -7,8 +7,9 @@ import { TablesCreator } from "../Data/migrations";
 import { BookShowInputDTO, Show } from "../Model/Show";
 import { BandDatabase } from "../Data/BandDatabase";
 import { Band } from "../Model/Band";
+import { ShowDatabase } from "../Data/ShowDataBase";
 
-export class UserBusiness {
+export class ShowBusiness {
 
     constructor(
         private idGenerator: IdGenerator,
@@ -16,7 +17,8 @@ export class UserBusiness {
         private authenticator: Authenticator,
         private createTable: TablesCreator,
         private userDB: UserDatabase,
-        private BandDB: BandDatabase
+        private bandDB: BandDatabase,
+        private showDB: ShowDatabase,
     ) { };
     
     public async bookShow (show: BookShowInputDTO) {
@@ -26,13 +28,18 @@ export class UserBusiness {
             throw new Error ("Campos incompletos !");
         };
 
+        await this.createTable.createTables();
+
         const userInfo = this.authenticator.getTokenData(token);     
         const user: User | undefined = await this.userDB.getUserById(userInfo.id);
         if (!user) {
             throw new Error("Usuário não cadastrado !");
         };
+        if (userInfo.role !== "ADMIN") {
+            throw new Error("Somente administradores podem marcar shows !")
+        };
 
-        const band: Band | undefined = await this.BandDB.findBandById(bandId);
+        const band: Band | undefined = await this.bandDB.findBandById(bandId);
         if (!band) {
             throw new Error ("Esta banda não está cadastrada !");
         };
@@ -47,7 +54,12 @@ export class UserBusiness {
             throw new Error ("Horário(s) inválido(s) !");
         };
 
-        //ToDo: validação - não cadastrar 2 shows no mesmo horário
+        for (let i = startTime; i < endTime; i++) {
+            const hasShowScheduled: boolean = await this.showDB.searchShowsByTime(weekDay, i, endTime -1);
+            if (hasShowScheduled) {
+                throw new Error ("Conflito entre shows já marcados");
+            };
+        };
 
     };
 };
